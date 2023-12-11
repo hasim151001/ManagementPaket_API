@@ -25,7 +25,7 @@ namespace ManagementPaket_API.Model
             List<PaketModel> paketList = new List<PaketModel>();
             try
             {
-                string query = "SELECT * FROM vw_pak_mspaket";
+                string query = "SELECT * FROM pak_mspaket";
                 SqlCommand command = new SqlCommand(query, _connection);
                 _connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -33,12 +33,13 @@ namespace ManagementPaket_API.Model
                 {
                     PaketModel paket = new PaketModel
                     {
-                        pak_id = reader["pak_id"].ToString(),
+                        pak_id = Convert.ToInt32(reader["pak_id"]),
+                        pak_id_alternatif = reader["pak_id_alternatif"].ToString(),
                         pak_nama_pemilik = reader["pak_nama_pemilik"].ToString(),
-                        pak_id_jenis = reader["pak_id_jenis"].ToString(),
+                        pak_id_jenis = Convert.ToInt32(reader["pak_id_jenis"]),
                         pak_tanggal_sampai = Convert.ToDateTime(reader["pak_tanggal_sampai"]),
                         pak_nama_pengirim = reader["pak_nama_pengirim"].ToString(),
-                        pak_status = reader["pak_status"].ToString(),
+                        pak_status = Convert.ToInt32(reader["pak_status"]),
                     };
                     paketList.Add(paket);
                 }
@@ -57,12 +58,12 @@ namespace ManagementPaket_API.Model
 
 
 
-        public PaketModel GetData(string pak_id)
+        public PaketModel GetData(int pak_id)
         {
             PaketModel paketModel = new PaketModel();
             try
             {
-                string query = "SELECT * FROM vw_pak_mspaket WHERE pak_id = @p1";
+                string query = "SELECT * FROM pak_mspaket WHERE pak_id = @p1";
                 using (SqlCommand command = new SqlCommand(query, _connection))
                 {
                     command.Parameters.AddWithValue("@p1", pak_id);
@@ -72,12 +73,14 @@ namespace ManagementPaket_API.Model
                     {
                         if (reader.Read())
                         {
-                            paketModel.pak_id = reader["pak_id"].ToString();
+                            paketModel.pak_id = Convert.ToInt32(reader["pak_id"]);
+                            paketModel.pak_id_alternatif = reader["pak_id_alternatif"].ToString();
                             paketModel.pak_nama_pemilik = reader["pak_nama_pemilik"].ToString();
-                            paketModel.pak_id_jenis = reader["pak_id_jenis"].ToString();
+                            paketModel.pak_id_jenis = Convert.ToInt32(reader["pak_id_jenis"]);
                             paketModel.pak_tanggal_sampai = Convert.ToDateTime(reader["pak_tanggal_sampai"]);
                             paketModel.pak_nama_pengirim = reader["pak_nama_pengirim"].ToString();
-                            paketModel.pak_status = reader["pak_status"].ToString();
+                            paketModel.pak_status = Convert.ToInt32(reader["pak_status"]); // Sesuaikan sesuai kebutuhan
+
                         }
                     }
                 }
@@ -93,8 +96,7 @@ namespace ManagementPaket_API.Model
             return paketModel;
         }
 
-
-        public void InsertData(string pak_nama_pemilik, string pak_id_jenis, string pak_nama_pengirim)
+        public void InsertData(string pak_nama_pemilik, int pak_id_jenis, string pak_nama_pengirim)
         {
             try
             {
@@ -105,13 +107,10 @@ namespace ManagementPaket_API.Model
 
                     command.Parameters.AddWithValue("@pak_nama_pemilik", pak_nama_pemilik);
                     command.Parameters.AddWithValue("@pak_id_jenis", pak_id_jenis);
-                    //  command.Parameters.AddWithValue("@pak_tanggal_sampai", pak_tanggal_sampai);
                     command.Parameters.AddWithValue("@pak_nama_pengirim", pak_nama_pengirim);
 
                     _connection.Open();
                     command.ExecuteNonQuery();
-                    _connection.Close();
-
                 }
             }
             catch (Exception ex)
@@ -123,6 +122,7 @@ namespace ManagementPaket_API.Model
                 _connection.Close();
             }
         }
+
         public void UpdateData(PaketModel paketModel)
         {
             try
@@ -154,7 +154,7 @@ namespace ManagementPaket_API.Model
         }
 
 
-        public void DeleteData(string pak_id)
+        public void DeleteData(int pak_id)
         {
             try
             {

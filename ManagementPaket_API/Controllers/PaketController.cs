@@ -36,7 +36,7 @@ namespace ManagementPaket_API.Controllers
         }
 
         [HttpGet("/GetPaket", Name = "GetPaket")]
-        public IActionResult GetPaket(string pak_id)
+        public IActionResult GetPaket(int pak_id)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace ManagementPaket_API.Controllers
         }
 
         [HttpPost("/InsertPaket", Name = "InsertPaket")]
-        public IActionResult InsertPaket(string pak_nama_pemilik, string pak_id_jenis, string pak_nama_pengirim)
+        public IActionResult InsertPaket(string pak_nama_pemilik, int pak_id_jenis, string pak_nama_pengirim)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace ManagementPaket_API.Controllers
         }
 
         [HttpDelete("/DeletePaket", Name = "DeletePaket")]
-        public IActionResult DeletePaket(string pak_id)
+        public IActionResult DeletePaket(int pak_id)
         {
             try
             {

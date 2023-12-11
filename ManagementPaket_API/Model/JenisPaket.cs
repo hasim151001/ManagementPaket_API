@@ -28,15 +28,16 @@ namespace ManagementPaket_API.Model
             try
             {
                 string query = "SELECT * FROM vw_pak_msjenispaket"; // Gunakan view yang telah dibuat
-                SqlCommand command = new SqlCommand(query, _connection);
+                using SqlCommand command = new SqlCommand(query, _connection);
                 _connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     JenisPaketModel jenispaket = new JenisPaketModel
                     {
-                        pak_id_jenis = reader["pak_id_jenis"].ToString(),
+                        pak_id_jenis = Convert.ToInt32(reader["pak_id_jenis"]),
                         pak_nama_jenis = reader["pak_nama_jenis"].ToString(),
+                        pak_status_jenis = Convert.ToInt32(reader["pak_status_jenis"]),
                     };
                     jenispaketList.Add(jenispaket);
                 }
@@ -54,7 +55,7 @@ namespace ManagementPaket_API.Model
         }
 
 
-        public JenisPaketModel GetData(string pak_id_jenis)
+        public JenisPaketModel GetData(int pak_id_jenis)
         {
             JenisPaketModel jenispaketModel = new JenisPaketModel();
             try
@@ -69,8 +70,10 @@ namespace ManagementPaket_API.Model
                     {
                         if (reader.Read())
                         {
-                            jenispaketModel.pak_id_jenis = reader["pak_id_jenis"].ToString();
+                            jenispaketModel.pak_id_jenis = Convert.ToInt32(reader["pak_id_jenis"]);
                             jenispaketModel.pak_nama_jenis = reader["pak_nama_jenis"].ToString();
+                            jenispaketModel.pak_status_jenis = Convert.ToInt32(reader["pak_status_jenis"]);
+
                         }
                     }
                 }
@@ -95,6 +98,7 @@ namespace ManagementPaket_API.Model
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@pak_nama_jenis", pak_nama_jenis);
+
                     _connection.Open();
                     command.ExecuteNonQuery();
                     _connection.Close();
@@ -122,6 +126,7 @@ namespace ManagementPaket_API.Model
 
                     command.Parameters.AddWithValue("@pak_id_jenis", jenispaketModel.pak_id_jenis);
                     command.Parameters.AddWithValue("@pak_nama_jenis", jenispaketModel.pak_nama_jenis);
+                    command.Parameters.AddWithValue("@pak_status_jenis", jenispaketModel.pak_status_jenis);
 
                     _connection.Open();
                     command.ExecuteNonQuery();
@@ -138,11 +143,11 @@ namespace ManagementPaket_API.Model
         }
 
 
-        public void DeleteData(string pak_id_jenis)
+        public void DeleteData(int pak_id_jenis)
         {
             try
             {
-                string spName = "sp_deleteJenisPaket";
+                string spName = "sp_disableJenisPaket";
 
                 using (SqlCommand command = new SqlCommand(spName, _connection))
                 {

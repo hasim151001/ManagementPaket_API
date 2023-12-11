@@ -35,7 +35,7 @@ namespace ManagementPaket_API.Controllers
         }
 
         [HttpGet("/GetJenisPaket", Name = "GetJenisPaket")]
-        public IActionResult GetJenisPaket(string pak_id_jenis)
+        public IActionResult GetJenisPaket(int pak_id_jenis)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace ManagementPaket_API.Controllers
         }
 
         [HttpDelete("/DeleteJenisPaket", Name = "DeleteJenisPaket")]
-        public IActionResult DeleteJenisPaket(string pak_id_jenis)
+        public IActionResult DeleteJenisPaket(int pak_id_jenis)
         {
             try
             {
