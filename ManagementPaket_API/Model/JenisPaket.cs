@@ -27,7 +27,7 @@ namespace ManagementPaket_API.Model
             List<JenisPaketModel> jenispaketList = new List<JenisPaketModel>();
             try
             {
-                string query = "SELECT * FROM vw_pak_msjenispaket"; // Gunakan view yang telah dibuat
+                string query = "SELECT * FROM pak_msjenispaket WHERE pak_status_jenis = 1 ";
                 using SqlCommand command = new SqlCommand(query, _connection);
                 _connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -60,7 +60,7 @@ namespace ManagementPaket_API.Model
             JenisPaketModel jenispaketModel = new JenisPaketModel();
             try
             {
-                string query = "SELECT * FROM vw_pak_msjenispaket WHERE pak_id_jenis = @p1";
+                string query = "SELECT * FROM pak_msjenispaket WHERE pak_id_jenis = @p1";
                 using (SqlCommand command = new SqlCommand(query, _connection))
                 {
                     command.Parameters.AddWithValue("@p1", pak_id_jenis);

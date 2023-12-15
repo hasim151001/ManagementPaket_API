@@ -25,7 +25,7 @@ namespace ManagementPaket_API.Model
             List<PaketModel> paketList = new List<PaketModel>();
             try
             {
-                string query = "SELECT * FROM pak_mspaket";
+                string query = "SELECT * FROM pak_mspaket WHERE pak_status = 1 ";
                 SqlCommand command = new SqlCommand(query, _connection);
                 _connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -136,8 +136,8 @@ namespace ManagementPaket_API.Model
                     command.Parameters.AddWithValue("@pak_id", paketModel.pak_id);
                     command.Parameters.AddWithValue("@pak_nama_pemilik", paketModel.pak_nama_pemilik);
                     command.Parameters.AddWithValue("@pak_id_jenis", paketModel.pak_id_jenis);
-                    command.Parameters.AddWithValue("@pak_tanggal_sampai", paketModel.pak_tanggal_sampai);
                     command.Parameters.AddWithValue("@pak_nama_pengirim", paketModel.pak_nama_pengirim);
+
 
                     _connection.Open();
                     command.ExecuteNonQuery();
@@ -158,7 +158,7 @@ namespace ManagementPaket_API.Model
         {
             try
             {
-                string spName = "sp_deletePaket";
+                string spName = "sp_disablePaket";
 
                 using (SqlCommand command = new SqlCommand(spName, _connection))
                 {
@@ -178,6 +178,61 @@ namespace ManagementPaket_API.Model
                 _connection.Close();
             }
         }
+
+
+        public List<PaketModel> GetView()
+        {
+            List<PaketModel> paketList = new List<PaketModel>();
+            try
+            {
+                string query = "SELECT * FROM vw_pak_mspaket WHERE pak_status = 1 ";
+                SqlCommand command = new SqlCommand(query, _connection);
+                _connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    PaketModel paket = new PaketModel();
+                    paket.pak_id = Convert.ToInt32(reader["pak_id"]);
+                    paket.pak_id_alternatif = reader["pak_id_alternatif"] == DBNull.Value ? string.Empty : reader["pak_id_alternatif"].ToString();
+                    paket.pak_nama_pemilik = reader["pak_nama_pemilik"].ToString();
+                    paket.pak_nama_jenis = reader["pak_nama_jenis"].ToString();
+
+                    if (reader["pak_tanggal_sampai"] != DBNull.Value)
+                    {
+                        if (DateTime.TryParse(reader["pak_tanggal_sampai"].ToString(), out DateTime tempDate))
+                        {
+                            paket.pak_tanggal_sampai = tempDate;
+                        }
+                        else
+                        {
+                            // Handle error or log it
+                            Console.WriteLine("Failed to parse date");
+                        }
+                    }
+                    else
+                    {
+                        paket.pak_tanggal_sampai = null;
+                    }
+
+
+                    paket.pak_nama_pengirim = reader["pak_nama_pengirim"].ToString();
+                    paket.pak_status = Convert.ToInt32(reader["pak_status"]);
+
+                    paketList.Add(paket);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                _connection?.Close();
+            }
+
+            return paketList;
+        }
+
 
 
     }

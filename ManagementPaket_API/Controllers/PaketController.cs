@@ -72,19 +72,27 @@ namespace ManagementPaket_API.Controllers
         [HttpPut("/UpdatePaket", Name = "UpdatePaket")]
         public IActionResult UpdatePaket([FromBody] PaketModel paketModel)
         {
-
             try
             {
+                if (paketModel == null)
+                {
+                    response.status = 400;
+                    response.messages = "Invalid data. PaketModel is required.";
+                    return BadRequest(response);
+                }
+
                 response.status = 200;
                 response.messages = "Success";
                 _paketRepository.UpdateData(paketModel);
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 response.status = 500;
-                response.messages = "Failed, " + ex;
+                response.messages = "Failed, " + ex.Message;
+                return StatusCode(500, response);
             }
-            return Ok(response);
         }
 
         [HttpDelete("/DeletePaket", Name = "DeletePaket")]
@@ -103,5 +111,25 @@ namespace ManagementPaket_API.Controllers
             }
             return Ok(response);
         }
+
+
+        [HttpGet("/GetView", Name = "GetView")]
+        public IActionResult GetView()
+        {
+            try
+            {
+                response.status = 200;
+                response.messages = "Success";
+                response.data = _paketRepository.GetView();
+            }
+            catch (Exception ex)
+            {
+                response.status = 500;
+                response.messages = "Failed" + ex;
+            }
+            return Ok(response);
+            //  return Ok(_paketRepository.getAllData());
+        }
+
     }
 }
